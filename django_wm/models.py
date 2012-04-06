@@ -9,7 +9,7 @@ class WMTransaction(models.Model):
                 ('completed', u'завершен'),
                 )
     user = models.ForeignKey(User, verbose_name=u'Пользователь')
-    status = models.CharField(u'Статус', choices=STATUSES, max_length=15)
+    status = models.CharField(u'Статус', choices=STATUSES, max_length=15, default='processing')
     created = models.DateTimeField(u'Создан', auto_now_add=True)
     completed = models.DateTimeField(u'Оплачен', required=False)
     amount = models.FloatField(u'Сумма платежа')

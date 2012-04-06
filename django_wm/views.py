@@ -18,9 +18,11 @@ def request_payment(request):
     except:
         return HttpResponseBadRequest('Wrong parameters')
     desc = request.POST.get('desc', u'Пополнение счета')
+    goal = request.POST.get('goal', None)
     user = request.user
     
-    transaction = WMTransaction(user=user)
+    transaction = WMTransaction(user=user, amount=amount, desc=desc, goal=goal)
+    transaction.save()
     
     form = PaymentForm(initial={
                                 'LMI_PAYMENT_AMOUNT': amount,
@@ -74,6 +76,7 @@ def process_payment(request):
         
     if LMI_MODE == '0' or getattr(settings, 'WM_TESTMODE', None):
         transaction.status = 'completed'
+        transaction.purse = LMI_PAYER_PURSE
         transaction.save()
         payment_done.send(transaction)
     else:

@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
+from .signals import payment_done
 
 class WMTransaction(models.Model):
     STATUSES = (
@@ -20,4 +21,10 @@ class WMTransaction(models.Model):
     def save(self, *args, **kwargs):
         if self.status == 'completed':
             self.completed = datetime.datetime.now()
+            try:
+                old = WMTransaction.objects.get(pk=self.pk)
+                if old.status == 'processing':
+                    payment_done.send(self)
+            except WMTransaction.DoesNotExist:
+                pass
         super(WMTransaction, self).save(*args, **kwargs)

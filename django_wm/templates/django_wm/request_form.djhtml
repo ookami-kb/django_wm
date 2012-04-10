@@ -7,15 +7,10 @@
     <style type="text/css">
 		body { background-color: #fff; color: #666; text-align: center; font-family: arial, sans-serif; }
 	</style>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$("#webmoney-form").submit();
-		});
-	</script>
 </head>
-<body>
+<body onload="document.getElementById('webmoney_form').submit();">
 	<div class="stat">
-		<form method="post" id="webmoney-form" action="https://merchant.webmoney.ru/lmi/payment.asp">
+		<form method="post" id="webmoney_form" action="https://merchant.webmoney.ru/lmi/payment.asp">
 			{{form.as_p}}
 			<p>Сейчас вы будете перенаправлены на страницу оплаты. Если этого не произошло, нажмите <input type="submit" value="здесь" /></p>
 		</form>

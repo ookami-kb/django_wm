@@ -9,7 +9,6 @@ from .models import WMTransaction
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
-from .signals import payment_done
 
 @login_required
 def request_payment(request):
@@ -73,12 +72,14 @@ def process_payment(request):
     except:
         # что-то не так, платеж не был найден
         return HttpResponseBadRequest('Wrong LMI_PAYMENT_NO')
-        
+    
+    if transaction.status == 'completed':
+        return HttpResponse('Payment already processed')            
+    
     if LMI_MODE == '0' or getattr(settings, 'WM_TESTMODE', None):
         transaction.status = 'completed'
         transaction.purse = LMI_PAYER_PURSE
         transaction.save()
-        payment_done.send(transaction)
     else:
         return HttpResponseBadRequest('Payment was in TEST MODE')
     
